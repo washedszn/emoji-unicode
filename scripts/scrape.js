@@ -1,14 +1,24 @@
-const superagent = require('superangent');
+const superagent = require('superagent');
 const cheerio = require('cheerio');
 
-export const scrape = () => {
+const scrape = async () => {
 
-    superagent
+    return await superagent
         .get('https://emojipedia.org/emoji/')
         .then(res => {
-            console.log(res)
+            let $ = cheerio.load(res.text);
+            let unicodes = [];
+
+            $('td:nth-child(2)').each((i, e) => {
+                unicodes[i] = $(e).text()
+            })
+
+            return unicodes;
         })
         .catch(err => {
             console.log(err)
+            return [];
         })
 }
+
+module.exports = scrape;
